@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import Calendar from './components/Calendar'
-import Sidebar, { type TaskData } from './components/Sidebar'
+import Calendar from './modules/calendar/components/Calendar'
+import Sidebar from './modules/calendar/components/Sidebar'
+import { useEventos, type Evento } from './modules/calendar/eventos'
 import './App.css'
 
 function App() {
-  const [tasks, setTasks] = useState<TaskData[]>([])
+  const { 
+    eventos, 
+    adicionarEvento, 
+    removerEvento, 
+    atualizarEvento,
+    isLoading,
+    error 
+  } = useEventos()
 
-  const handleAddTask = (task: TaskData) => {
-    setTasks(prev => [...prev, task])
+  const handleAddTask = async (evento: Omit<Evento, 'id'>) => {
+    return await adicionarEvento(evento)
   }
 
-  const handleDeleteTask = (index: number) => {
-    setTasks(prev => prev.filter((_, i) => i !== index))
+  const handleDeleteTask = async (index: number) => {
+    return await removerEvento(index)
+  }
+
+  const handleUpdateTask = async (id: string, evento: Partial<Evento>) => {
+    return await atualizarEvento(id, evento)
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar 
         onAddTask={handleAddTask}
-        tasks={tasks}
+        tasks={eventos}
         onDeleteTask={handleDeleteTask}
+        onUpdateTask={handleUpdateTask}
+        isLoading={isLoading}
+        error={error}
       />
       
-      <div className="flex-1 flex flex-col ml-64">
+      <div className="flex-1 flex flex-col ml-96">
         <header className="bg-white shadow-sm border-b">
           <div className="px-6 py-4">
             <h1 className="text-2xl font-bold text-gray-900">Wasted Time</h1>
           </div>
         </header>
         <main className="flex-1 p-6">
-          <Calendar tasks={tasks} />
+          <Calendar tasks={eventos} />
         </main>
       </div>
     </div>

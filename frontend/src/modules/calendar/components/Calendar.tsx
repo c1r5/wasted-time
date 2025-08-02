@@ -3,53 +3,20 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useState } from "react";
-import type { TaskData } from "./Sidebar";
+import type { Evento } from "../eventos";
+import { eventosToCalendarEvents } from "../eventos";
 import { findAllGaps, gapsToCalendarEvents } from "../utils/find-gaps";
 
 interface CalendarProps {
   className?: string;
-  tasks: TaskData[];
+  tasks: Evento[];
 }
 
 export default function Calendar({ className = "", tasks }: CalendarProps) {
   const [showGaps, setShowGaps] = useState(false);
-  // Função para gerar eventos diários para todo o mês
-  const generateDailyEvents = (task: TaskData) => {
-    const events = [];
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const dateStr = date.toISOString().split('T')[0];
-      
-      events.push({
-        title: task.title,
-        start: `${dateStr}T${task.startTime}:00`,
-        end: `${dateStr}T${task.endTime}:00`,
-        backgroundColor: task.color,
-        borderColor: task.color
-      });
-    }
-    
-    return events;
-  };
-
-  const userEvents = tasks.flatMap(task => {
-    if (task.isDaily) {
-      return generateDailyEvents(task);
-    } else {
-      return [{
-        title: task.title,
-        start: `${task.startDate}T${task.startTime}:00`,
-        end: `${task.endDate}T${task.endTime}:00`,
-        backgroundColor: task.color,
-        borderColor: task.color
-      }];
-    }
-  });
+  
+  // Converte eventos para o formato do FullCalendar
+  const userEvents = eventosToCalendarEvents(tasks);
 
   // Gerar eventos de gaps se showGaps estiver ativo
   const gaps = showGaps ? findAllGaps(tasks) : [];

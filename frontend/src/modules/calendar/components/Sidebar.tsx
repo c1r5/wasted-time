@@ -1,34 +1,24 @@
 import { useState } from 'react';
+import { type Evento, colorPalette, EventoItem, EventoModal } from '../eventos';
 
 interface SidebarProps {
-  onAddTask: (task: TaskData) => void;
-  tasks: TaskData[];
-  onDeleteTask: (index: number) => void;
+  onAddTask: (task: Omit<Evento, 'id'>) => Promise<boolean>;
+  tasks: Evento[];
+  onDeleteTask: (index: number) => Promise<boolean>;
+  onUpdateTask?: (id: string, task: Partial<Evento>) => Promise<boolean>;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
-export interface TaskData {
-  title: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  color: string;
-  isDaily: boolean;
-}
-
-const colorPalette = [
-  { name: 'Azul', value: '#3b82f6', border: '#2563eb' },
-  { name: 'Verde', value: '#10b981', border: '#059669' },
-  { name: 'Amarelo', value: '#f59e0b', border: '#d97706' },
-  { name: 'Vermelho', value: '#ef4444', border: '#dc2626' },
-  { name: 'Roxo', value: '#8b5cf6', border: '#7c3aed' },
-  { name: 'Rosa', value: '#ec4899', border: '#db2777' },
-  { name: 'Índigo', value: '#6366f1', border: '#4f46e5' },
-  { name: 'Esmeralda', value: '#059669', border: '#047857' }
-];
-
-export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps) {
-  const [formData, setFormData] = useState<TaskData>({
+export default function Sidebar({ 
+  onAddTask, 
+  tasks, 
+  onDeleteTask, 
+  onUpdateTask,
+  isLoading = false,
+  error 
+}: SidebarProps) {
+  const [formData, setFormData] = useState<Omit<Evento, 'id'>>({
     title: '',
     startDate: '',
     startTime: '',
@@ -38,27 +28,59 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
     isDaily: false
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Evento | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isValidTask = formData.title && formData.startTime && formData.endTime && 
       (formData.isDaily || (formData.startDate && formData.endDate));
     
     if (isValidTask) {
-      onAddTask(formData);
-      setFormData({
-        title: '',
-        startDate: '',
-        startTime: '',
-        endDate: '',
-        endTime: '',
-        color: colorPalette[0].value,
-        isDaily: false
-      });
+      setSubmitError(null);
+      const success = await onAddTask(formData);
+      
+      if (success) {
+        setFormData({
+          title: '',
+          startDate: '',
+          startTime: '',
+          endDate: '',
+          endTime: '',
+          color: colorPalette[0].value,
+          isDaily: false
+        });
+      } else {
+        setSubmitError('Erro ao adicionar evento. Verifique os dados e tente novamente.');
+      }
     }
   };
 
-  const handleInputChange = (field: keyof TaskData, value: string) => {
+  const handleEdit = (evento: Evento) => {
+    setEditingEvent(evento);
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = async (eventoData: Omit<Evento, 'id'>) => {
+    if (editingEvent && onUpdateTask) {
+      const success = await onUpdateTask(editingEvent.id!, eventoData);
+      if (success) {
+        setIsModalOpen(false);
+        setEditingEvent(null);
+      }
+    }
+  };
+
+  const handleDelete = async (index: number) => {
+    const success = await onDeleteTask(index);
+    if (!success) {
+      setSubmitError('Erro ao excluir evento. Tente novamente.');
+    }
+  };
+
+  const handleInputChange = (field: keyof Omit<Evento, 'id'>, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -74,6 +96,14 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
           {/* Formulário Nova Tarefa */}
           <div className="p-6 border-b">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Nova Tarefa</h3>
+            
+            {/* Feedback de erro */}
+            {(error || submitError) && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error || submitError}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <input
@@ -188,9 +218,14 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+              disabled={isLoading}
+              className={`w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium ${
+                isLoading
+                  ? 'bg-blue-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              } text-white`}
             >
-              Adicionar Tarefa
+              {isLoading ? 'Adicionando...' : 'Adicionar Tarefa'}
             </button>
             </form>
           </div>
@@ -202,43 +237,32 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
               <p className="text-gray-500 text-sm">Nenhuma tarefa criada ainda.</p>
             ) : (
               <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
-                {tasks.map((task, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-3 border">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2">
-                          <h4 className="font-medium text-gray-900 text-sm">{task.title}</h4>
-                          {task.isDaily && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                              Diária
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-600 mt-1">
-                          {task.startDate} {task.startTime} - {task.endDate} {task.endTime}
-                        </p>
-                        <div 
-                          className="w-4 h-4 rounded mt-2"
-                          style={{ backgroundColor: task.color }}
-                        />
-                      </div>
-                      <button
-                        onClick={() => onDeleteTask(index)}
-                        className="ml-2 p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded"
-                        title="Excluir tarefa"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+                {tasks.map((evento, index) => (
+                  <EventoItem
+                    key={evento.id || index}
+                    evento={evento}
+                    index={index}
+                    onDelete={handleDelete}
+                    onEdit={onUpdateTask ? handleEdit : undefined}
+                  />
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Modal de Edição */}
+      <EventoModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingEvent(null);
+        }}
+        onSubmit={handleModalSubmit}
+        evento={editingEvent}
+        title="Editar Evento"
+      />
     </>
   );
 }
