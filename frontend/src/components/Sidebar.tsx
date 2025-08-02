@@ -65,8 +65,8 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
   return (
     <>
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-lg transition-all duration-300 z-40 w-96 overflow-hidden`}>
-        <div className="px-6 py-4 border-b">
+      <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-lg transition-all duration-300 z-40 w-96 flex flex-col`}>
+        <div className="px-6 py-4 border-b flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Gerenciador de Tarefas</h2>
         </div>
 
@@ -196,12 +196,12 @@ export default function Sidebar({ onAddTask, tasks, onDeleteTask }: SidebarProps
           </div>
 
           {/* Lista de Tarefas */}
-          <div className="p-6">
+          <div className="p-6 flex-shrink-0">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Tarefas Criadas</h3>
             {tasks.length === 0 ? (
               <p className="text-gray-500 text-sm">Nenhuma tarefa criada ainda.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="max-h-80 overflow-y-auto space-y-3 pr-2">
                 {tasks.map((task, index) => (
                   <div key={index} className="bg-gray-50 rounded-lg p-3 border">
                     <div className="flex justify-between items-start">

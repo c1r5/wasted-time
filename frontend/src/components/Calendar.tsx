@@ -2,7 +2,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { useState } from "react";
 import type { TaskData } from "./Sidebar";
+import { findAllGaps, gapsToCalendarEvents } from "../utils/find-gaps";
 
 interface CalendarProps {
   className?: string;
@@ -10,6 +12,7 @@ interface CalendarProps {
 }
 
 export default function Calendar({ className = "", tasks }: CalendarProps) {
+  const [showGaps, setShowGaps] = useState(false);
   // Função para gerar eventos diários para todo o mês
   const generateDailyEvents = (task: TaskData) => {
     const events = [];
@@ -48,7 +51,18 @@ export default function Calendar({ className = "", tasks }: CalendarProps) {
     }
   });
 
-  const allEvents = [...userEvents];
+  // Gerar eventos de gaps se showGaps estiver ativo
+  const gaps = showGaps ? findAllGaps(tasks) : [];
+  const gapEvents = showGaps ? gapsToCalendarEvents(gaps) : [];
+  
+  // Debug logs
+  if (showGaps) {
+    console.log('Tasks:', tasks);
+    console.log('Gaps found:', gaps);
+    console.log('Gap events:', gapEvents);
+  }
+  
+  const allEvents = [...userEvents, ...gapEvents];
 
   return (
     <div className={`${className} w-full h-full`}>
@@ -61,7 +75,13 @@ export default function Calendar({ className = "", tasks }: CalendarProps) {
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'multiMonthYear,dayGridMonth,timeGridDay'
+          right: 'gapsToggle multiMonthYear,dayGridMonth,timeGridDay'
+        }}
+        customButtons={{
+          gapsToggle: {
+            text: showGaps ? 'Ocultar Gaps' : 'Visualizar Gaps',
+            click: () => setShowGaps(!showGaps)
+          }
         }}
         buttonText={{
           year: 'Ano',
