@@ -25,6 +25,7 @@ export default function EventoModal({
     endTime: '',
     color: colorPalette[0].value,
     isDaily: false,
+    weekDays: [],
     description: '',
     category: ''
   });
@@ -39,6 +40,7 @@ export default function EventoModal({
         endTime: evento.endTime,
         color: evento.color,
         isDaily: evento.isDaily,
+        weekDays: evento.weekDays || [],
         description: evento.description || '',
         category: evento.category || ''
       });
@@ -52,6 +54,7 @@ export default function EventoModal({
         endTime: '',
         color: colorPalette[0].value,
         isDaily: false,
+        weekDays: [],
         description: '',
         category: ''
       });
@@ -64,7 +67,7 @@ export default function EventoModal({
     onClose();
   };
 
-  const handleInputChange = (field: keyof EventoFormData, value: string | boolean) => {
+  const handleInputChange = (field: keyof EventoFormData, value: string | boolean | number[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -127,35 +130,16 @@ export default function EventoModal({
             </div>
           </div>
 
-          <div>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={formData.isDaily}
-                onChange={(e) => handleInputChange('isDaily', e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Evento diário (repetir todos os dias do mês)
-              </span>
-            </label>
-          </div>
-
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={`block text-sm font-medium mb-1 ${formData.isDaily ? 'text-gray-400' : 'text-gray-700'}`}>
+              <label className="block text-sm font-medium mb-1 text-gray-700">
                 Data Início
               </label>
               <input
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => handleInputChange('startDate', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none ${
-                  formData.isDaily 
-                    ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                }`}
-                disabled={formData.isDaily}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required={!formData.isDaily}
               />
             </div>
@@ -175,6 +159,56 @@ export default function EventoModal({
                 disabled={formData.isDaily}
                 required={!formData.isDaily}
               />
+            </div>
+          </div>
+
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={formData.isDaily}
+                onChange={(e) => handleInputChange('isDaily', e.target.checked)}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-700">
+                Evento diário (repetir todos os dias do mês)
+              </span>
+            </label>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Dias da semana
+            </label>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { value: 1, label: 'Seg' },
+                { value: 2, label: 'Ter' },
+                { value: 3, label: 'Qua' },
+                { value: 4, label: 'Qui' },
+                { value: 5, label: 'Sex' },
+                { value: 6, label: 'Sáb' },
+                { value: 0, label: 'Dom' }
+              ].map((day) => (
+                <label key={day.value} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.weekDays?.includes(day.value) || false}
+                    onChange={(e) => {
+                      const weekDays = formData.weekDays || [];
+                      if (e.target.checked) {
+                        handleInputChange('weekDays', [...weekDays, day.value]);
+                      } else {
+                        handleInputChange('weekDays', weekDays.filter(d => d !== day.value));
+                      }
+                    }}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-xs font-medium text-gray-700">
+                    {day.label}
+                  </span>
+                </label>
+              ))}
             </div>
           </div>
 

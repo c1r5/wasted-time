@@ -7,6 +7,7 @@ export interface Evento {
   endTime: string;
   color: string;
   isDaily: boolean;
+  weekDays?: number[]; // Array com os dias da semana (0-6, onde 0 = domingo)
   description?: string;
   category?: string;
 }

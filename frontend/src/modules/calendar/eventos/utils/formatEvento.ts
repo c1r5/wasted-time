@@ -31,7 +31,15 @@ export function generateDailyCalendarEvents(evento: Evento): CalendarEvent[] {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
+    const dayOfWeek = date.getDay(); // 0 = domingo, 1 = segunda, etc.
     const dateStr = date.toISOString().split('T')[0];
+    
+    // Se weekDays estiver definido, verificar se o dia da semana está incluído
+    if (evento.weekDays && evento.weekDays.length > 0) {
+      if (!evento.weekDays.includes(dayOfWeek)) {
+        continue; // Pular este dia se não estiver nos dias da semana selecionados
+      }
+    }
     
     events.push({
       title: evento.title,

@@ -25,7 +25,8 @@ export default function Sidebar({
     endDate: '',
     endTime: '',
     color: colorPalette[0].value,
-    isDaily: false
+    isDaily: false,
+    weekDays: []
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,7 +51,8 @@ export default function Sidebar({
           endDate: '',
           endTime: '',
           color: colorPalette[0].value,
-          isDaily: false
+          isDaily: false,
+          weekDays: []
         });
       } else {
         setSubmitError('Erro ao adicionar evento. Verifique os dados e tente novamente.');
@@ -143,35 +145,16 @@ export default function Sidebar({
               </div>
             </div>
 
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={formData.isDaily}
-                  onChange={(e) => setFormData(prev => ({ ...prev, isDaily: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  Tarefa diária (repetir todos os dias do mês)
-                </span>
-              </label>
-            </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className={`block text-sm font-medium mb-1 ${formData.isDaily ? 'text-gray-400' : 'text-gray-700'}`}>
+                <label className={`block text-sm font-medium mb-1 text-gray-700`}>
                   Data Início
                 </label>
                 <input
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => handleInputChange('startDate', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none ${
-                    formData.isDaily 
-                      ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
-                      : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                  }`}
-                  disabled={formData.isDaily}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required={!formData.isDaily}
                 />
               </div>
@@ -191,6 +174,56 @@ export default function Sidebar({
                   disabled={formData.isDaily}
                   required={!formData.isDaily}
                 />
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.isDaily}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isDaily: e.target.checked }))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Tarefa diária (repetir todos os dias do mês)
+                </span>
+              </label>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Dias da semana
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { value: 1, label: 'Seg' },
+                  { value: 2, label: 'Ter' },
+                  { value: 3, label: 'Qua' },
+                  { value: 4, label: 'Qui' },
+                  { value: 5, label: 'Sex' },
+                  { value: 6, label: 'Sáb' },
+                  { value: 0, label: 'Dom' }
+                ].map((day, index) => (
+                  <label key={day.value} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.weekDays?.includes(day.value) || false}
+                      onChange={(e) => {
+                        const weekDays = formData.weekDays || [];
+                        if (e.target.checked) {
+                          setFormData(prev => ({ ...prev, weekDays: [...weekDays, day.value] }));
+                        } else {
+                          setFormData(prev => ({ ...prev, weekDays: weekDays.filter(d => d !== day.value) }));
+                        }
+                      }}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-xs font-medium text-gray-700">
+                      {day.label}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
