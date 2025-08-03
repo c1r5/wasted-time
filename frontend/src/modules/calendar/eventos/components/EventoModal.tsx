@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Evento, EventoFormData } from '../types/evento';
 import { colorPalette } from '../types/evento';
+import { useThemeContext } from '../../../shared';
 
 interface EventoModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ export default function EventoModal({
   evento = null,
   title = "Novo Evento" 
 }: EventoModalProps) {
+  const { theme } = useThemeContext();
+  
   const [formData, setFormData] = useState<EventoFormData>({
     title: '',
     startDate: '',
@@ -74,13 +77,33 @@ export default function EventoModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    >
+      <div 
+        className="rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
+        style={{
+          backgroundColor: theme.colors.surface,
+          border: `1px solid ${theme.colors.border}`,
+          boxShadow: `0 10px 25px ${theme.colors.shadow}`
+        }}
+      >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <h2 
+            className="text-xl font-semibold"
+            style={{ color: theme.colors.text.primary }}
+          >
+            {title}
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            style={{ 
+              color: theme.colors.text.secondary,
+              transition: 'color 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = theme.colors.text.primary}
+            onMouseLeave={(e) => e.currentTarget.style.color = theme.colors.text.secondary}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -90,14 +113,22 @@ export default function EventoModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label 
+              className="block text-sm font-medium mb-1"
+              style={{ color: theme.colors.text.secondary }}
+            >
               Nome do Evento
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-md focus:outline-none"
+              style={{
+                backgroundColor: theme.colors.background,
+                color: theme.colors.text.primary,
+                border: `1px solid ${theme.colors.border}`,
+              }}
               placeholder="Digite o nome do evento"
               required
             />
@@ -105,26 +136,42 @@ export default function EventoModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label 
+                className="block text-sm font-medium mb-1"
+                style={{ color: theme.colors.text.secondary }}
+              >
                 Hora Início
               </label>
               <input
                 type="time"
                 value={formData.startTime}
                 onChange={(e) => handleInputChange('startTime', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none"
+                style={{
+                  backgroundColor: theme.colors.background,
+                  color: theme.colors.text.primary,
+                  border: `1px solid ${theme.colors.border}`,
+                }}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label 
+                className="block text-sm font-medium mb-1"
+                style={{ color: theme.colors.text.secondary }}
+              >
                 Hora Fim
               </label>
               <input
                 type="time"
                 value={formData.endTime}
                 onChange={(e) => handleInputChange('endTime', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none"
+                style={{
+                  backgroundColor: theme.colors.background,
+                  color: theme.colors.text.primary,
+                  border: `1px solid ${theme.colors.border}`,
+                }}
                 required
               />
             </div>
@@ -132,30 +179,47 @@ export default function EventoModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">
+              <label 
+                className="block text-sm font-medium mb-1"
+                style={{ color: theme.colors.text.secondary }}
+              >
                 Data Início
               </label>
               <input
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => handleInputChange('startDate', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none"
+                style={{
+                  backgroundColor: theme.colors.background,
+                  color: theme.colors.text.primary,
+                  border: `1px solid ${theme.colors.border}`,
+                }}
                 required={!formData.isDaily}
               />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-1 ${formData.isDaily ? 'text-gray-400' : 'text-gray-700'}`}>
+              <label 
+                className="block text-sm font-medium mb-1"
+                style={{ 
+                  color: formData.isDaily 
+                    ? theme.colors.text.secondary + '80' 
+                    : theme.colors.text.secondary 
+                }}
+              >
                 Data Fim
               </label>
               <input
                 type="date"
                 value={formData.endDate}
                 onChange={(e) => handleInputChange('endDate', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none ${
-                  formData.isDaily 
-                    ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' 
-                    : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                }`}
+                className="w-full px-3 py-2 rounded-md focus:outline-none"
+                style={{
+                  backgroundColor: formData.isDaily ? theme.colors.border : theme.colors.background,
+                  color: formData.isDaily ? theme.colors.text.secondary + '80' : theme.colors.text.primary,
+                  border: `1px solid ${theme.colors.border}`,
+                  cursor: formData.isDaily ? 'not-allowed' : 'auto'
+                }}
                 disabled={formData.isDaily}
                 required={!formData.isDaily}
               />
@@ -168,16 +232,26 @@ export default function EventoModal({
                 type="checkbox"
                 checked={formData.isDaily}
                 onChange={(e) => handleInputChange('isDaily', e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded"
+                style={{
+                  accentColor: theme.colors.primary,
+                  borderColor: theme.colors.border
+                }}
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span 
+                className="text-sm font-medium"
+                style={{ color: theme.colors.text.primary }}
+              >
                 Evento diário (repetir todos os dias do mês)
               </span>
             </label>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label 
+              className="block text-sm font-medium mb-3"
+              style={{ color: theme.colors.text.secondary }}
+            >
               Dias da semana
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -202,9 +276,16 @@ export default function EventoModal({
                         handleInputChange('weekDays', weekDays.filter(d => d !== day.value));
                       }
                     }}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded"
+                    style={{
+                      accentColor: theme.colors.primary,
+                      borderColor: theme.colors.border
+                    }}
                   />
-                  <span className="text-xs font-medium text-gray-700">
+                  <span 
+                    className="text-xs font-medium"
+                    style={{ color: theme.colors.text.primary }}
+                  >
                     {day.label}
                   </span>
                 </label>
@@ -213,7 +294,10 @@ export default function EventoModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label 
+              className="block text-sm font-medium mb-3"
+              style={{ color: theme.colors.text.secondary }}
+            >
               Cor do Evento
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -222,11 +306,15 @@ export default function EventoModal({
                   key={color.value}
                   type="button"
                   onClick={() => handleInputChange('color', color.value)}
-                  className={`w-12 h-12 rounded-md border-2 hover:scale-105 transition-transform ${
-                    formData.color === color.value 
-                      ? 'border-gray-800 shadow-lg' 
-                      : 'border-gray-200'
-                  }`}
+                  className="w-12 h-12 rounded-md border-2 hover:scale-105 transition-transform"
+                  style={{
+                    borderColor: formData.color === color.value 
+                      ? theme.colors.text.primary
+                      : theme.colors.border,
+                    boxShadow: formData.color === color.value 
+                      ? `0 4px 6px ${theme.colors.shadow}` 
+                      : 'none'
+                  }}
                   style={{ backgroundColor: color.value }}
                   title={color.name}
                 />
@@ -235,13 +323,21 @@ export default function EventoModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label 
+              className="block text-sm font-medium mb-1"
+              style={{ color: theme.colors.text.secondary }}
+            >
               Descrição (opcional)
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-md focus:outline-none"
+              style={{
+                backgroundColor: theme.colors.background,
+                color: theme.colors.text.primary,
+                border: `1px solid ${theme.colors.border}`,
+              }}
               placeholder="Adicione uma descrição..."
               rows={3}
             />
@@ -251,13 +347,37 @@ export default function EventoModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="btn-secondary flex-1 px-4 py-2 rounded-md focus:outline-none font-medium"
+              style={{
+                backgroundColor: theme.colors.surface,
+                color: theme.colors.text.primary,
+                border: `1px solid ${theme.colors.border}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.border;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.surface;
+              }}
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+              className="btn-primary flex-1 py-2 px-4 rounded-md focus:outline-none font-medium"
+              style={{
+                backgroundColor: theme.colors.primary,
+                color: theme.colors.surface,
+                border: `1px solid ${theme.colors.primary}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.secondary;
+                e.currentTarget.style.borderColor = theme.colors.secondary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.primary;
+                e.currentTarget.style.borderColor = theme.colors.primary;
+              }}
             >
               {evento ? 'Atualizar' : 'Criar'} Evento
             </button>

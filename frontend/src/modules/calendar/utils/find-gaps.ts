@@ -1,22 +1,9 @@
-import type { TaskData } from '../components/Sidebar';
-
-export interface TimeGap {
-  start: string;
-  end: string;
-  duration: number; // em segundos
-  date: string;
-}
-
-export interface CalendarEvent {
-  start: string;
-  end: string;
-  title: string;
-}
+import type { Evento, CalendarEvent, TimeGap } from '../eventos/types/evento';
 
 /**
- * Converte TaskData em eventos do calendário
+ * Converte Evento em eventos do calendário
  */
-export function tasksToEvents(tasks: TaskData[]): CalendarEvent[] {
+export function tasksToEvents(tasks: Evento[]): CalendarEvent[] {
   return tasks.flatMap(task => {
     if (task.isDaily) {
       return generateDailyEvents(task);
@@ -33,7 +20,7 @@ export function tasksToEvents(tasks: TaskData[]): CalendarEvent[] {
 /**
  * Gera eventos diários para todo o mês
  */
-function generateDailyEvents(task: TaskData): CalendarEvent[] {
+function generateDailyEvents(task: Evento): CalendarEvent[] {
   const events = [];
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -76,13 +63,13 @@ function minutesToTime(minutes: number): string {
  */
 function mergeOverlappingEvents(events: { start: number; end: number }[]): { start: number; end: number }[] {
   if (events.length === 0) return [];
-  
+
   const merged: { start: number; end: number }[] = [];
   let current = events[0];
-  
+
   for (let i = 1; i < events.length; i++) {
     const next = events[i];
-    
+
     // Se há sobreposição ou são contíguos (diferença <= 15 minutos)
     if (next.start <= current.end + 15) {
       // Mescla os eventos
@@ -93,7 +80,7 @@ function mergeOverlappingEvents(events: { start: number; end: number }[]): { sta
       current = next;
     }
   }
-  
+
   merged.push(current);
   return merged;
 }
@@ -105,27 +92,38 @@ export function findGapsForDate(events: CalendarEvent[], targetDate: string): Ti
   // Filtra eventos do dia específico
   const dayEvents = events
     .filter(event => event.start.startsWith(targetDate))
-    .map(event => ({
-      start: timeToMinutes(event.start.split('T')[1].substring(0, 5)),
-      end: timeToMinutes(event.end.split('T')[1].substring(0, 5))
-    }))
+    .map(event => {
+      const startTime = event.start.split('T')[1].substring(0, 5);
+      const endTime = event.end.split('T')[1].substring(0, 5);
+      let endMinutes = timeToMinutes(endTime);
+      
+      // Se o evento termina em 00:00, considerar como 23:59 (1439 minutos)
+      if (endMinutes === 0 && endTime === '00:00') {
+        endMinutes = 23 * 60 + 59; // 1439 minutos = 23:59
+      }
+      
+      return {
+        start: timeToMinutes(startTime),
+        end: endMinutes
+      };
+    })
     .sort((a, b) => a.start - b.start);
-  
+
   // Mescla eventos sobrepostos ou muito próximos
   const mergedEvents = mergeOverlappingEvents(dayEvents);
 
   if (mergedEvents.length === 0) {
     // Dia completamente livre
     return [{
-      start: `${targetDate}T06:00:00`,
+      start: `${targetDate}T00:00:00`,
       end: `${targetDate}T24:00:00`,
-      duration: 18 * 60 * 60, // 18 horas em segundos
+      duration: 24 * 60 * 60, // 24 horas em segundos
       date: targetDate
     }];
   }
 
   const gaps: TimeGap[] = [];
-  const dayStart = 6 * 60; // 06:00
+  const dayStart = 0 * 60; // 00:00
   const dayEnd = 24 * 60; // 24:00
 
   // Gap antes do primeiro evento
@@ -179,7 +177,7 @@ export function findGapsForDate(events: CalendarEvent[], targetDate: string): Ti
 /**
  * Encontra todas as lacunas de tempo para um array de tarefas
  */
-export function findAllGaps(tasks: TaskData[], targetDate?: string): TimeGap[] {
+export function findAllGaps(tasks: Evento[], targetDate?: string): TimeGap[] {
   const events = tasksToEvents(tasks);
   console.log('Converted events:', events);
 
@@ -233,7 +231,8 @@ export function gapsToCalendarEvents(gaps: TimeGap[]): any[] {
       borderColor: '#16a34a',
       textColor: '#ffffff',
       opacity: 0.7,
-      classNames: ['time-gap-event']
+      classNames: ['time-gap-event'],
+      display: 'background'
     };
   });
 }

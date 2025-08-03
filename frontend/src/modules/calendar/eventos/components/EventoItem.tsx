@@ -1,5 +1,6 @@
 import type { Evento } from '../types/evento';
 import { formatTime, formatDate } from '../utils/formatEvento';
+import { useThemeContext } from '../../../shared';
 
 interface EventoItemProps {
   evento: Evento;
@@ -9,25 +10,50 @@ interface EventoItemProps {
 }
 
 export default function EventoItem({ evento, index, onDelete, onEdit }: EventoItemProps) {
+  const { theme } = useThemeContext();
+  
   return (
-    <div className="bg-gray-50 rounded-lg p-3 border">
+    <div 
+      className="rounded-lg p-3"
+      style={{
+        backgroundColor: theme.colors.background,
+        border: `1px solid ${theme.colors.border}`,
+      }}
+    >
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <div className="flex items-center space-x-2">
-            <h4 className="font-medium text-gray-900 text-sm">{evento.title}</h4>
+            <h4 
+              className="font-medium text-sm"
+              style={{ color: theme.colors.text.primary }}
+            >
+              {evento.title}
+            </h4>
             {evento.isDaily && (
-              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              <span 
+                className="text-xs px-2 py-1 rounded"
+                style={{
+                  backgroundColor: theme.colors.primary + '20',
+                  color: theme.colors.primary
+                }}
+              >
                 Diária
               </span>
             )}
           </div>
           
           <div className="mt-1">
-            <p className="text-xs text-gray-600">
+            <p 
+              className="text-xs"
+              style={{ color: theme.colors.text.secondary }}
+            >
               {formatTime(evento.startTime)} - {formatTime(evento.endTime)}
             </p>
             {!evento.isDaily && (
-              <p className="text-xs text-gray-500">
+              <p 
+                className="text-xs"
+                style={{ color: theme.colors.text.secondary }}
+              >
                 {formatDate(evento.startDate)} até {formatDate(evento.endDate)}
               </p>
             )}
@@ -44,7 +70,18 @@ export default function EventoItem({ evento, index, onDelete, onEdit }: EventoIt
           {onEdit && (
             <button
               onClick={() => onEdit(evento)}
-              className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded"
+              className="p-1 rounded transition-colors"
+              style={{ 
+                color: theme.colors.text.secondary,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.text.secondary + '20';
+                e.currentTarget.style.color = theme.colors.text.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = theme.colors.text.secondary;
+              }}
               title="Editar evento"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,7 +92,18 @@ export default function EventoItem({ evento, index, onDelete, onEdit }: EventoIt
           
           <button
             onClick={() => onDelete(index)}
-            className="p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded"
+            className="p-1 rounded transition-colors"
+            style={{ 
+              color: '#ef4444',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ef444420';
+              e.currentTarget.style.color = '#dc2626';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#ef4444';
+            }}
             title="Excluir evento"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
