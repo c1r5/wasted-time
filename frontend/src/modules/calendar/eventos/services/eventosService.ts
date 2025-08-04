@@ -5,7 +5,7 @@ import type { Evento, FiltroEvento } from '../types/evento';
  * Atualmente usando localStorage, mas pode ser facilmente adaptado para API
  */
 class EventosService {
-  private readonly STORAGE_KEY = 'wasted-time-eventos';
+  private readonly STORAGE_KEY = 'time-manager-eventos';
 
   /**
    * Carrega eventos do localStorage

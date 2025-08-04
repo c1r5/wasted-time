@@ -1,8 +1,8 @@
-# ⏳ Wasted Time Viewer
+# ⏳ Time Manager
 
 ## 📌 VISÃO GERAL
 
-**Wasted Time Viewer** é uma aplicação que permite ao usuário gerenciar e refletir sobre como utiliza seu tempo no dia a dia. A ferramenta oferece uma visão macro, média e micro da rotina, ajudando a responder:
+**Time Manager** é uma aplicação que permite ao usuário gerenciar e refletir sobre como utiliza seu tempo no dia a dia. A ferramenta oferece uma visão macro, média e micro da rotina, ajudando a responder:
 
 - Para onde foi meu tempo?
 - Onde mais gastei meu tempo?

@@ -7,7 +7,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  title = 'Wasted Time',
+  title = 'Time Manager',
   actions
 }) => {
   const { theme, toggleTheme, themeMode } = useThemeContext();
@@ -34,8 +34,6 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             key={`theme-toggle-${themeMode}`}
             onClick={() => {
-              console.log('Button clicked. Current theme mode:', themeMode);
-              console.log('Current theme colors:', theme.colors);
               toggleTheme();
             }}
             className="p-2 rounded-lg transition-all"
