@@ -19,11 +19,8 @@ help: ## Mostra esta mensagem de ajuda
 	@echo "$(YELLOW)Comandos disponíveis:$(NC)"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-pm-install:
-	@echo "$(GREEN)📦 Instalando gerenciador de pacotes PNPM...$(NC)"
-	npm -g install pnpm
 
-install: pm-install ## Instala dependências com pnpm
+install:
 	@echo "$(GREEN)📦 Instalando dependências com pnpm...$(NC)"
 	cd $(SOURCE_DIR) && pnpm install --prod
 	@echo "$(GREEN)✅ Dependências instaladas com sucesso!$(NC)"
