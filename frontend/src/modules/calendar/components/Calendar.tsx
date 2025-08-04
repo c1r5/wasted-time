@@ -11,9 +11,10 @@ import { useThemeContext } from "../../shared";
 interface CalendarProps {
   className?: string;
   tasks: Evento[];
+  customButtons?: { [key: string]: { text: string; click: () => void } };
 }
 
-export default function Calendar({ className = "", tasks }: CalendarProps) {
+export default function Calendar({ className = "", tasks, customButtons = {} }: CalendarProps) {
   const { theme } = useThemeContext();
   const [showGaps, setShowGaps] = useState(false);
   
@@ -161,13 +162,14 @@ export default function Calendar({ className = "", tasks }: CalendarProps) {
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'gapsToggle multiMonthYear,dayGridMonth,timeGridDay'
+          right: `gapsToggle ${Object.keys(customButtons).join(' ')} multiMonthYear,dayGridMonth,timeGridDay`
         }}
         customButtons={{
           gapsToggle: {
             text: showGaps ? 'Ocultar Gaps' : 'Visualizar Gaps',
             click: () => setShowGaps(!showGaps)
-          }
+          },
+          ...customButtons
         }}
         buttonText={{
           year: 'Ano',

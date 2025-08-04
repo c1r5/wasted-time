@@ -5,7 +5,7 @@ import { themes } from './themes';
 const THEME_STORAGE_KEY = 'app-theme-mode';
 
 export const useTheme = () => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const [themeMode, _setThemeMode] = useState<ThemeMode>('dark');
 
   const theme: Theme = themes.dark;
 
@@ -14,7 +14,7 @@ export const useTheme = () => {
     console.log('Toggle theme disabled - always dark');
   };
 
-  const handleSetThemeMode = (mode: ThemeMode) => {
+  const handleSetThemeMode = (_mode: ThemeMode) => {
     // Desabilitado - sempre dark
     console.log('Set theme mode disabled - always dark');
   };

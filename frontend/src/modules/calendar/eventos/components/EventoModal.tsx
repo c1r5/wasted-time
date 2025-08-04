@@ -11,15 +11,15 @@ interface EventoModalProps {
   title?: string;
 }
 
-export default function EventoModal({ 
-  isOpen, 
-  onClose, 
-  onSubmit, 
+export default function EventoModal({
+  isOpen,
+  onClose,
+  onSubmit,
   evento = null,
-  title = "Novo Evento" 
+  title = "Novo Evento"
 }: EventoModalProps) {
   const { theme } = useThemeContext();
-  
+
   const [formData, setFormData] = useState<EventoFormData>({
     title: '',
     startDate: '',
@@ -77,11 +77,11 @@ export default function EventoModal({
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center z-50"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
     >
-      <div 
+      <div
         className="rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
         style={{
           backgroundColor: theme.colors.surface,
@@ -90,7 +90,7 @@ export default function EventoModal({
         }}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 
+          <h2
             className="text-xl font-semibold"
             style={{ color: theme.colors.text.primary }}
           >
@@ -98,7 +98,7 @@ export default function EventoModal({
           </h2>
           <button
             onClick={onClose}
-            style={{ 
+            style={{
               color: theme.colors.text.secondary,
               transition: 'color 0.3s ease'
             }}
@@ -113,7 +113,7 @@ export default function EventoModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label 
+            <label
               className="block text-sm font-medium mb-1"
               style={{ color: theme.colors.text.secondary }}
             >
@@ -136,7 +136,7 @@ export default function EventoModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label 
+              <label
                 className="block text-sm font-medium mb-1"
                 style={{ color: theme.colors.text.secondary }}
               >
@@ -156,7 +156,7 @@ export default function EventoModal({
               />
             </div>
             <div>
-              <label 
+              <label
                 className="block text-sm font-medium mb-1"
                 style={{ color: theme.colors.text.secondary }}
               >
@@ -179,7 +179,7 @@ export default function EventoModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label 
+              <label
                 className="block text-sm font-medium mb-1"
                 style={{ color: theme.colors.text.secondary }}
               >
@@ -199,12 +199,12 @@ export default function EventoModal({
               />
             </div>
             <div>
-              <label 
+              <label
                 className="block text-sm font-medium mb-1"
-                style={{ 
-                  color: formData.isDaily 
-                    ? theme.colors.text.secondary + '80' 
-                    : theme.colors.text.secondary 
+                style={{
+                  color: formData.isDaily
+                    ? theme.colors.text.secondary + '80'
+                    : theme.colors.text.secondary
                 }}
               >
                 Data Fim
@@ -238,7 +238,7 @@ export default function EventoModal({
                   borderColor: theme.colors.border
                 }}
               />
-              <span 
+              <span
                 className="text-sm font-medium"
                 style={{ color: theme.colors.text.primary }}
               >
@@ -248,7 +248,7 @@ export default function EventoModal({
           </div>
 
           <div>
-            <label 
+            <label
               className="block text-sm font-medium mb-3"
               style={{ color: theme.colors.text.secondary }}
             >
@@ -282,7 +282,7 @@ export default function EventoModal({
                       borderColor: theme.colors.border
                     }}
                   />
-                  <span 
+                  <span
                     className="text-xs font-medium"
                     style={{ color: theme.colors.text.primary }}
                   >
@@ -294,7 +294,7 @@ export default function EventoModal({
           </div>
 
           <div>
-            <label 
+            <label
               className="block text-sm font-medium mb-3"
               style={{ color: theme.colors.text.secondary }}
             >
@@ -308,14 +308,13 @@ export default function EventoModal({
                   onClick={() => handleInputChange('color', color.value)}
                   className="w-12 h-12 rounded-md border-2 hover:scale-105 transition-transform"
                   style={{
-                    borderColor: formData.color === color.value 
+                    borderColor: formData.color === color.value
                       ? theme.colors.text.primary
                       : theme.colors.border,
-                    boxShadow: formData.color === color.value 
-                      ? `0 4px 6px ${theme.colors.shadow}` 
+                    boxShadow: formData.color === color.value
+                      ? `0 4px 6px ${theme.colors.shadow}`
                       : 'none'
                   }}
-                  style={{ backgroundColor: color.value }}
                   title={color.name}
                 />
               ))}
@@ -323,7 +322,7 @@ export default function EventoModal({
           </div>
 
           <div>
-            <label 
+            <label
               className="block text-sm font-medium mb-1"
               style={{ color: theme.colors.text.secondary }}
             >

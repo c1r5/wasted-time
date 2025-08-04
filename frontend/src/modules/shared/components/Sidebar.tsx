@@ -55,7 +55,7 @@ export default function Sidebar({
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       const existingStyle = document.getElementById('sidebar-scrollbar-styles');
       if (existingStyle) {
@@ -82,7 +82,7 @@ export default function Sidebar({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validação básica de campos obrigatórios
     const isValidTask = formData.title && formData.startTime && formData.endTime &&
       (formData.isDaily || (formData.startDate && formData.endDate));
@@ -90,20 +90,20 @@ export default function Sidebar({
     // Validação de horário - permitir eventos que cruzam a meia-noite
     const startTime = formData.startTime;
     const endTime = formData.endTime;
-    
+
     // Converter horários para minutos para comparação
     const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
     const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
-    
+
     // Se horário de fim for menor que início, assume que passa da meia-noite (ex: 22:00 às 02:00)
     const isOvernightEvent = endMinutes < startMinutes;
-    
+
     // Validar se é um evento válido (não pode ter duração zero no mesmo dia)
     const isValidTime = isOvernightEvent || endMinutes > startMinutes;
 
     if (isValidTask && isValidTime) {
       setSubmitError(null);
-      
+
       // Se for um evento que passa da meia-noite e não for diário, ajustar data de fim
       let adjustedFormData = { ...formData };
       if (isOvernightEvent && !formData.isDaily && formData.startDate && formData.endDate) {
@@ -112,7 +112,7 @@ export default function Sidebar({
         nextDay.setDate(nextDay.getDate() + 1);
         adjustedFormData.endDate = nextDay.toISOString().split('T')[0];
       }
-      
+
       const success = await onAddTask(adjustedFormData);
 
       if (success) {
@@ -352,7 +352,7 @@ export default function Sidebar({
                     { value: 5, label: 'Sex' },
                     { value: 6, label: 'Sáb' },
                     { value: 0, label: 'Dom' }
-                  ].map((day, index) => (
+                  ].map((day, _index) => (
                     <label key={day.value} className="flex items-center space-x-2">
                       <input
                         type="checkbox"

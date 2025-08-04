@@ -2,6 +2,7 @@ import Calendar from './modules/calendar/components/Calendar'
 import Sidebar from './modules/shared/components/Sidebar'
 import { useEventos, type Evento } from './modules/calendar/eventos'
 import { ThemeProvider, Header, ThemeWrapper } from './modules/shared'
+import { useMetrics, MetricsModal } from './modules/metrics'
 import './App.css'
 
 function App() {
@@ -13,6 +14,8 @@ function App() {
     isLoading,
     error
   } = useEventos()
+
+  const { isModalOpen, closeModal, getMetricsButton } = useMetrics()
 
   const handleAddTask = async (evento: Omit<Evento, 'id'>) => {
     return await adicionarEvento(evento)
@@ -41,10 +44,14 @@ function App() {
           <div className="flex-1 flex flex-col ml-96">
             <Header />
             <main className="app-main flex-1 p-6">
-              <Calendar tasks={eventos} />
+              <Calendar 
+                tasks={eventos} 
+                customButtons={getMetricsButton()}
+              />
             </main>
           </div>
         </div>
+        <MetricsModal isOpen={isModalOpen} onClose={closeModal} />
       </ThemeWrapper>
     </ThemeProvider>
   )
