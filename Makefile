@@ -19,23 +19,29 @@ help: ## Mostra esta mensagem de ajuda
 	@echo "$(YELLOW)Comandos disponíveis:$(NC)"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-clean: ## Remove node_modules e arquivos de build (mantém package.json)
+clear: ## Remove node_modules e arquivos de build (mantém package.json)
 	@echo "$(YELLOW)🧹 Limpando projeto...$(NC)"
 	rm -rf $(SOURCE_DIR)/node_modules
 	rm -rf $(BUILD_DIR)
 	rm -rf $(SOURCE_DIR)/.vite
 	rm -rf $(SOURCE_DIR)/node_modules/.cache
-	@echo "$(GREEN)✅ Limpeza concluída! package.json mantido$(NC)"
+	@echo "$(YELLOW)🔄 Removendo lockfiles conflitantes...$(NC)"
+	rm -f $(SOURCE_DIR)/pnpm-lock.yaml
+	rm -f $(SOURCE_DIR)/package-lock.json
+	@echo "$(GREEN)✅ Limpeza concluída! Pronto para yarn install$(NC)"
 
-install: clean ## Instala dependências com yarn
+install: ## Instala dependências com yarn
 	@echo "$(GREEN)📦 Instalando dependências com yarn...$(NC)"
-	cd $(SOURCE_DIR) && yarn install
+	cd $(SOURCE_DIR) && yarn install --immutable
 	@echo "$(GREEN)✅ Dependências instaladas com sucesso!$(NC)"
 
 build: install ## Executa build da aplicação
 	@echo "$(GREEN)🔨 Executando build...$(NC)"
 	cd $(SOURCE_DIR) && yarn build
 	@echo "$(GREEN)✅ Build concluído! Arquivos em $(BUILD_DIR)$(NC)"
+
+# Alias para compatibilidade
+clean: clear ## Alias para clear
 
 # Desenvolvimento local
 dev: install ## Inicia servidor de desenvolvimento
