@@ -29,7 +29,7 @@ clean: ## Remove node_modules e arquivos de build (mantém package.json)
 
 install: clean ## Instala dependências com yarn
 	@echo "$(GREEN)📦 Instalando dependências com yarn...$(NC)"
-	cd $(SOURCE_DIR) && yarn install --frozen-lockfile
+	cd $(SOURCE_DIR) && yarn install
 	@echo "$(GREEN)✅ Dependências instaladas com sucesso!$(NC)"
 
 build: install ## Executa build da aplicação
