@@ -175,10 +175,13 @@ export default function Sidebar({
           boxShadow: `0 4px 6px ${theme.colors.shadow}`
         }}
       >
-        <div
-          className="px-6 py-4 flex-shrink-0"
-          style={{ borderBottom: `1px solid ${theme.colors.border}` }}
-        >
+          <div
+            className="px-6 py-4 flex-shrink-0 flex flex-col justify-center items-center"
+            style={{
+              borderBottom: `1px solid ${theme.colors.border}`,
+              height: "88.31px"
+            }}
+          >
           <h2
             className="text-xl font-semibold"
             style={{ color: theme.colors.text.primary }}
