@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useThemeContext } from '../../shared';
+import { useEventos } from '../../calendar/eventos';
+import { useMetrics } from '../hooks/useMetrics';
+import { FullCalendarSelector } from './FullCalendarSelector';
+import { DayOccupationChart } from './DayOccupationChart';
 
 interface MetricsModalProps {
   isOpen: boolean;
@@ -8,16 +12,29 @@ interface MetricsModalProps {
 
 export const MetricsModal: React.FC<MetricsModalProps> = ({ isOpen, onClose }) => {
   const { theme } = useThemeContext();
+  const { eventos } = useEventos();
+  const { generateChartData, getDayOccupationData } = useMetrics();
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   if (!isOpen) return null;
 
+  const chartData = generateChartData(eventos);
+
+  const handleDaySelect = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  const dayOccupationData = selectedDate ?
+    getDayOccupationData(eventos, selectedDate) :
+    { occupiedHours: 0, freeHours: 24, taskCount: 0, categoryTime: {} };
+
   return (
-    <div 
+    <div
       className="fixed inset-0 flex items-center justify-center z-50"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
     >
-      <div 
-        className="rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+      <div
+        className="rounded-lg p-6 w-full max-w-7xl max-h-[90vh] overflow-y-auto"
         style={{
           backgroundColor: theme.colors.surface,
           border: `1px solid ${theme.colors.border}`,
@@ -25,15 +42,15 @@ export const MetricsModal: React.FC<MetricsModalProps> = ({ isOpen, onClose }) =
         }}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 
+          <h2
             className="text-2xl font-semibold"
             style={{ color: theme.colors.text.primary }}
           >
-            Métricas de Produtividade
+            Métricas
           </h2>
           <button
             onClick={onClose}
-            style={{ 
+            style={{
               color: theme.colors.text.secondary,
               transition: 'color 0.3s ease'
             }}
@@ -46,76 +63,40 @@ export const MetricsModal: React.FC<MetricsModalProps> = ({ isOpen, onClose }) =
           </button>
         </div>
 
-        <div className="space-y-6">
-          {/* Placeholder para gráficos futuros */}
-          <div 
-            className="h-64 rounded-lg border-2 border-dashed flex items-center justify-center"
-            style={{ 
-              borderColor: theme.colors.border,
-              backgroundColor: theme.colors.background 
-            }}
-          >
-            <div className="text-center">
-              <div 
-                className="text-lg font-medium mb-2"
-                style={{ color: theme.colors.text.primary }}
-              >
-                Gráficos em Desenvolvimento
-              </div>
-              <div 
-                className="text-sm"
-                style={{ color: theme.colors.text.secondary }}
-              >
-                Aqui serão exibidos gráficos de produtividade, tempo gasto por categoria, etc.
-              </div>
-            </div>
-          </div>
-
-          <div 
-            className="h-64 rounded-lg border-2 border-dashed flex items-center justify-center"
-            style={{ 
-              borderColor: theme.colors.border,
-              backgroundColor: theme.colors.background 
-            }}
-          >
-            <div className="text-center">
-              <div 
-                className="text-lg font-medium mb-2"
-                style={{ color: theme.colors.text.primary }}
-              >
-                Estatísticas Detalhadas
-              </div>
-              <div 
-                className="text-sm"
-                style={{ color: theme.colors.text.secondary }}
-              >
-                Tempo total trabalhado, gaps de produtividade, comparativos semanais/mensais
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 rounded-md focus:outline-none font-medium"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Calendário de seleção */}
+          <div
+            className="p-6 rounded-lg"
             style={{
-              backgroundColor: theme.colors.primary,
-              color: '#ffffff',
-              border: `1px solid ${theme.colors.primary}`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#475569';
-              e.currentTarget.style.borderColor = '#475569';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = theme.colors.primary;
-              e.currentTarget.style.borderColor = theme.colors.primary;
+              backgroundColor: theme.colors.background,
+              border: `1px solid ${theme.colors.border}`
             }}
           >
-            Fechar
-          </button>
+            <FullCalendarSelector
+              monthData={chartData.tasksByDay.tasksData}
+              selectedDate={selectedDate}
+              onDaySelect={handleDaySelect}
+            />
+          </div>
+
+          {/* Gráfico de ocupação do dia selecionado */}
+          <div
+            className="p-6 rounded-lg"
+            style={{
+              backgroundColor: theme.colors.background,
+              border: `1px solid ${theme.colors.border}`
+            }}
+          >
+            <DayOccupationChart
+              selectedDate={selectedDate}
+              occupiedHours={dayOccupationData.occupiedHours}
+              freeHours={dayOccupationData.freeHours}
+              taskCount={dayOccupationData.taskCount}
+              categoryTime={dayOccupationData.categoryTime}
+            />
+          </div>
         </div>
+
       </div>
     </div>
   );

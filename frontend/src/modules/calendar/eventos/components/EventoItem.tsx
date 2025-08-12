@@ -1,5 +1,6 @@
 import type { Evento } from '../types/evento';
 import { formatTime, formatDate } from '../utils/formatEvento';
+import { categoriasPredefinidas } from '../types/evento';
 import { useThemeContext } from '../../../shared';
 
 interface EventoItemProps {
@@ -11,6 +12,9 @@ interface EventoItemProps {
 
 export default function EventoItem({ evento, index, onDelete, onEdit }: EventoItemProps) {
   const { theme } = useThemeContext();
+  
+  // Encontrar a categoria predefinida
+  const categoria = categoriasPredefinidas.find(cat => cat.value === evento.category);
   
   return (
     <div 
@@ -59,11 +63,21 @@ export default function EventoItem({ evento, index, onDelete, onEdit }: EventoIt
             )}
           </div>
           
-          <div 
-            className="w-4 h-4 rounded mt-2"
-            style={{ backgroundColor: evento.color }}
-            title="Cor do evento"
-          />
+          <div className="flex items-center gap-2 mt-2">
+            <div 
+              className="w-4 h-4 rounded"
+              style={{ backgroundColor: evento.color }}
+              title="Cor do evento"
+            />
+            {categoria && (
+              <span 
+                className="text-xs"
+                style={{ color: theme.colors.text.secondary }}
+              >
+                {categoria.icon} {categoria.name}
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="flex space-x-1 ml-2">

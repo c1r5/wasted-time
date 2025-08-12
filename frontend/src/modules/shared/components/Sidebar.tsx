@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type Evento, colorPalette, EventoItem, EventoModal } from '../../calendar/eventos';
+import { type Evento, colorPalette, EventoItem, EventoModal, categoriasPredefinidas } from '../../calendar/eventos';
 import { useThemeContext } from '..';
 
 interface SidebarProps {
@@ -72,7 +72,8 @@ export default function Sidebar({
     endTime: '',
     color: colorPalette[0].value,
     isDaily: false,
-    weekDays: []
+    weekDays: [],
+    category: ''
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,7 +85,7 @@ export default function Sidebar({
     e.preventDefault();
 
     // Validação básica de campos obrigatórios
-    const isValidTask = formData.title && formData.startTime && formData.endTime &&
+    const isValidTask = formData.title && formData.startTime && formData.endTime && formData.category &&
       (formData.isDaily || (formData.startDate && formData.endDate));
 
     // Validação de horário - permitir eventos que cruzam a meia-noite
@@ -124,7 +125,8 @@ export default function Sidebar({
           endTime: '',
           color: colorPalette[0].value,
           isDaily: false,
-          weekDays: []
+          weekDays: [],
+          category: ''
         });
       } else {
         setSubmitError('Erro ao adicionar evento. Verifique os dados e tente novamente.');
@@ -380,6 +382,33 @@ export default function Sidebar({
                     </label>
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: theme.colors.text.secondary }}
+                >
+                  Categoria
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => handleInputChange('category', e.target.value)}
+                  className="w-full px-3 py-2 rounded-md focus:outline-none mb-4"
+                  style={{
+                    backgroundColor: theme.colors.background,
+                    color: theme.colors.text.primary,
+                    border: `1px solid ${theme.colors.border}`,
+                  }}
+                  required
+                >
+                  <option value="">Selecione uma categoria</option>
+                  {categoriasPredefinidas.map((categoria) => (
+                    <option key={categoria.value} value={categoria.value}>
+                      {categoria.icon} {categoria.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

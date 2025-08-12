@@ -55,3 +55,12 @@ export const colorPalette = [
 ] as const;
 
 export type ColorOption = typeof colorPalette[number];
+
+// Categorias predefinidas
+export const categoriasPredefinidas = [
+  { name: 'Trabalho', value: 'trabalho', color: '#3b82f6', icon: '💼' },
+  { name: 'Estudo', value: 'estudo', color: '#fcff60ff', icon: '📚' },
+  { name: 'Lazer', value: 'lazer', color: '#f59e0b', icon: '🎮' }
+] as const;
+
+export type CategoriaOption = typeof categoriasPredefinidas[number];

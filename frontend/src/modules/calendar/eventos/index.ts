@@ -7,10 +7,11 @@ export type {
   TimeGap, 
   FiltroEvento, 
   EventoFormData,
-  ColorOption 
+  ColorOption,
+  CategoriaOption
 } from './types/evento';
 
-export { colorPalette } from './types/evento';
+export { colorPalette, categoriasPredefinidas } from './types/evento';
 
 // Components
 export { default as EventoModal } from './components/EventoModal';

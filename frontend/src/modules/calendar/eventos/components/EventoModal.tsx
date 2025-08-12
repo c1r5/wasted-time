@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Evento, EventoFormData } from '../types/evento';
-import { colorPalette } from '../types/evento';
+import { colorPalette, categoriasPredefinidas } from '../types/evento';
 import { useThemeContext } from '../../../shared';
 
 interface EventoModalProps {
@@ -291,6 +291,33 @@ export default function EventoModal({
                 </label>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{ color: theme.colors.text.secondary }}
+            >
+              Categoria
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => handleInputChange('category', e.target.value)}
+              className="w-full px-3 py-2 rounded-md focus:outline-none"
+              style={{
+                backgroundColor: theme.colors.background,
+                color: theme.colors.text.primary,
+                border: `1px solid ${theme.colors.border}`,
+              }}
+              required
+            >
+              <option value="">Selecione uma categoria</option>
+              {categoriasPredefinidas.map((categoria) => (
+                <option key={categoria.value} value={categoria.value}>
+                  {categoria.icon} {categoria.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
