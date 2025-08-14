@@ -49,27 +49,3 @@ Criar um MVP onde o usuário possa:
 2. **Insights automáticos** com IA: recomendações de hábitos, alertas de excesso em certas categorias, sugestões de foco.
 3. Integração com **Google Calendar** ou outras agendas.
 4. Modo de análise semanal com **destaques de produtividade e procrastinação**.
-
----
-
-## ⚙️ Tecnologias Sugeridas para o MVP
-
-- **Frontend:** React + TailwindCSS
-- **Visualização:** D3.js ou FullCalendar
-- **Armazenamento local:** localStorage ou IndexedDB (sem backend)
-- **Extras:** Exportar CSV/imagem; modo escuro; responsividade mobile
-
----
-
-## 📁 Estrutura Inicial Sugerida
-
-```
-/src
-├── components
-│ ├── TimeGrid.jsx
-│ ├── TimeBlock.jsx
-├── logic
-│ └── encontrarLacunas.js
-├── App.jsx
-└── index.js
-```
